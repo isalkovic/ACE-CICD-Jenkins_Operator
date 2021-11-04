@@ -1,6 +1,4 @@
 
-timestamps {
-
 node () {
 
 	stage ('ACE_APIS_Operator_Deployment - Checkout') {
@@ -14,7 +12,7 @@ node () {
 
     chmod 777 *
     cp 1-1.bar /var/lib/jenkins/jobs/${JOB_NAME}/workspace
-  
+
     cd ${WORKSPACE}
     oc login ${OCP_API_URL} -u ${OCP_USER} -p ${OCP_PASSWORD} --insecure-skip-tls-verify
     oc project ${Namespace}
@@ -61,7 +59,3 @@ node () {
     rm -rf ${ACE_APP2}'''
 	  }
   }
-
-cleanWs()
-
-}

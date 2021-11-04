@@ -9,18 +9,18 @@ spec:
   enableMetrics: true
   license:
     accept: true
-    license: L-APEH-C49LB6
-    use: AppConnectEnterpriseNonProduction
+    license: L-APEH-C49KZH
+    use: CloudPakForIntegrationProduction
   pod:
     containers:
       runtime:
         resources:
           limits:
             cpu: 1000m
-            memory: 550Mi
+            memory: 350Mi
           requests:
             cpu: 1000m
-            memory: 500Mi
+            memory: 300Mi
   adminServerSecure: true
   router:
     timeout: 120s

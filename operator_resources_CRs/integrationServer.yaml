@@ -11,6 +11,9 @@ spec:
     accept: true
     license: L-APEH-C49KZH
     use: CloudPakForIntegrationProduction
+  tracing:
+    enabled: true
+    namespace: cp4i  
   pod:
     containers:
       runtime:

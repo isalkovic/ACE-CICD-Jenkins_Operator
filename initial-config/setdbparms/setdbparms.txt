@@ -1,0 +1,14 @@
+# Lines starting with a "#" are ignored
+# Each line which starts mqsisetdbparms will be run as written
+# Alternatively each line should specify the <resource> <userId> <password>, separated by a single space
+# Each line will be processed by calling...
+#   mqsisetdbparms ${ACE_SERVER_NAME} -n <resource> -u <userId> -p <password>
+
+# postavljanje truststore passworda
+#setdbparms::truststore "my username" truststorepwd
+
+#
+# USERS2 db2admin passw0rd
+# generički za sve DSN: mqsisetdbparms -w c:\workdir\ACEServ1 -n dsn::DSN -u myuserid4 -p mypassword4
+#mqsisetdbparms -w /home/aceuser/ace-server -n odbc::USERS2 -u db2admin -p passw0rd
+odbc::USERS2 db2admin passw0rd

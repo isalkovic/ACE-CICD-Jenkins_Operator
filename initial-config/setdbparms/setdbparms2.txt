@@ -1,0 +1,2 @@
+odbc::USERS2 db2admin passw0rd
+setdbparms::USERS1 db2admin passw0rd

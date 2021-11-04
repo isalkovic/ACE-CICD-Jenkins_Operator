@@ -2,7 +2,7 @@
 node () {
 
 	stage ('ACE_APIS_Operator_Deployment - Checkout') {
-   	 checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-token', url: 'https://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@github.com/isalkovic/ACE-CICD-Jenkins_Operator.git']]])
+   	 checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-token', url: 'https://isalkovic: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@github.com/isalkovic/ACE-CICD-Jenkins_Operator.git']]])
 	}
 
   stage ('ACE_APIS_Operator_Deployment - Build') {

@@ -2,7 +2,7 @@
 node () {
 
 	stage ('ACE_APIS_Operator_Deployment - Checkout') {
-   	 checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-token', url: 'https://isalkovic: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@github.com/isalkovic/ACE-CICD-Jenkins_Operator.git']]])
+   	 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'jenkins-token', url: 'https://github.ibm.com/isalkovic/ACE-CICD-Jenkins_Operator.git']]])
 	}
 
   stage ('ACE_APIS_Operator_Deployment - Build') {
@@ -11,64 +11,51 @@ node () {
     sh label: '', script: '''#!/bin/sh
 
     chmod 777 *
-    ls -l
     cp 1-1.bar /var/lib/jenkins/jobs/${JOB_NAME}/workspace
 
     cd ${WORKSPACE}
-    oc login --token=sha256~nuuItGLCo4_PDNSq7ArZb5JoyM7ebE730PEZ29lS2cA --server=https://c108-e.eu-gb.containers.cloud.ibm.com:31504
+    oc login ${OCP_API_URL} -u ${OCP_USER} -p ${OCP_PASSWORD} --insecure-skip-tls-verify
+    oc project ${Namespace}
+    docker login ${OCP_Registry_External_URL} -u $(oc whoami) -p $(oc whoami -t)
+    docker build -t ${imagename}:${BUILD_NUMBER} .
+    docker tag ${imagename}:${BUILD_NUMBER} ${OCP_Registry_External_URL}/${Namespace}/${imagename}:${tag}
+    docker push ${OCP_Registry_External_URL}/${Namespace}/${imagename}:${tag}
 
-    oc project cp4i
-    
-    #####################
-    
-    Namespace=cp4i
-    appname=ivoapp
-    IntegrationServerName=ivoserver2
-    DeploymentType=install
-
-    chmod -R 777 *
+    #Create the IntegrationServer Configurations from CR yamls
+    chmod 777 -R ConfigurationInputs
+    chmod 777 -R ConfigurationResources
 
     # Create CR for setdbparms
-    setdbparms=$(base64 -w 0 initial-config/setdbparms/setdbparms2.txt)
-    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-setdbparms-name~${appname}-setdbparms~" -e "s~replace-with-setdbparms-base64~${setdbparms}~" operator_resources_CRs/configuration_setdbparms.yaml > setdbparms-temp.yaml
-
+    setdbparms=$(base64 -w 0 ConfigurationInputs/setdbparms.txt)
+    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-setdbparms-bas64~${setdbparms}~" ConfigurationResources/setdbparms.yaml > setdbparms-temp.yaml
     # Create CR for TrustStore
-    #truststore=$(base64 -w 0 initial-config/truststore/es-cert.p12)
-    #sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-truststore-name~${appname}-truststore~" -e "s~replace-with-truststore-base64~${truststore}~" operator_resources_CRs/configuration_truststore.yaml > truststore-temp.yaml
-
-    # Create CR for the policy project, zip policy files, exclude any old zip file and replace old zip file
-    mkdir DefaultPolicies
-    cp initial-config/policy/* DefaultPolicies
-    zip -r - DefaultPolicies > policyFolder.zip
-    policy=$(base64 -w 0 policyFolder.zip)
-    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-policy-name~${appname}-policy~" -e "s~replace-with-policy-base64~${policy}~" operator_resources_CRs/configuration_policyProject.yaml > policyProject-temp.yaml
-
+    truststore=$(base64 -w 0 ConfigurationInputs/es-cert.p12)
+    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-truststore-bas64~${truststore}~" ConfigurationResources/truststore.yaml > truststore-temp.yaml
+    # Create CR for the policy project
+    policy=$(base64 -w 0 ConfigurationInputs/kafka_policy.zip)
+    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-policy-base64~${policy}~" ConfigurationResources/policyProject.yaml > policyProject-temp.yaml
     # Create CR for server configuration
-    serverconf=$(base64 -w 0 initial-config/serverconf/server.conf.yaml)
-    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-serverconf-name~${appname}-serverconf~" -e "s~replace-with-serverconf-base64~${serverconf}~" operator_resources_CRs/configuration_serverconf.yaml > server.conf-temp.yaml
+    serverconf=$(base64 -w 0 ConfigurationInputs/server.conf.yaml)
+    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-serverconf-bas64~${serverconf}~" ConfigurationResources/server.conf.yaml > server.conf-temp.yaml
+    # Deploy the Integration Server
+    sed -e "s/replaceIntServerName/${IntegrationServer}/" -e "s/replaceNamespace/${Namespace}/" -e "s/replaceWithBakedImage/${imagename}:${tag}/" Kafka_APIs_IS.yaml > Kafka_APIs-temp.yaml
 
-    # Create the Integration Server CR
-    sed -e "s/replace-with-namespace/${Namespace}/" -e "s/replace-with-server-name/${IntegrationServerName}/" operator_resources_CRs/integrationServer.yaml > integrationServer-temp.yaml
-
-    cat integrationServer-temp.yaml
-    
-    #####################
-    
     if test ${DeploymentType} = \'install\'; then
       oc apply -f setdbparms-temp.yaml
-#      oc apply -f truststore-temp.yaml
+      oc apply -f truststore-temp.yaml
       oc apply -f policyProject-temp.yaml
       oc apply -f server.conf-temp.yaml
-      oc apply -f integrationServer-temp.yaml
+      oc apply -f Kafka_APIs-temp.yaml
     else
       oc replace -f setdbparms-temp.yaml
-#      oc replace -f truststore-temp.yaml
+      oc replace -f truststore-temp.yaml
       oc replace -f policyProject-temp.yaml
       oc replace -f server.conf-temp.yaml
-      oc replace -f integrationServer-temp.yaml
+      oc replace -f Kafka_APIs-temp.yaml
     fi
 
-    '''
+    cd /var/icp-builds
+    rm -rf ${ACE_APP1}
+    rm -rf ${ACE_APP2}'''
 	  }
   }
-

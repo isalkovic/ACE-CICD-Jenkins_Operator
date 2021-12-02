@@ -1,0 +1,11 @@
+apiVersion: appconnect.ibm.com/v1beta1
+kind: Configuration
+metadata:
+  namespace: replace-with-namespace
+  name: replace-with-barauth-name
+  labels:
+    labelname: apis
+spec:
+  data: eplace-with-barauth-base64
+  description: "Requirement when using external bar repo - even if no auth required, configuration is required"
+  type: barauth

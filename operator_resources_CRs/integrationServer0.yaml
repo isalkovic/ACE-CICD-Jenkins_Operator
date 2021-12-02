@@ -11,9 +11,6 @@ spec:
     accept: true
     license: L-APEH-C49KZH
     use: CloudPakForIntegrationProduction
-  tracing:
-    enabled: true
-    namespace: cp4i  
   pod:
     containers:
       runtime:
@@ -40,9 +37,5 @@ spec:
   version: 12.0.1
   logFormat: basic
   replicas: 1
-  barURL: >-
-    https://ace-dashboard-demo-dash:3443/v1/directories/Server?8e1aa93a-f069-484b-b58d-8574fc160113
+  barURL: replace-With-Bar-URL
   configurations:
-    - ivoapp-policy
-    - ivoapp-serverconf
-    - ivoapp-setdbparms

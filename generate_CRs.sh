@@ -26,7 +26,7 @@ chmod -R 777 ${PathToConfigFolder}
 
 # Create the Integration Server CR in any case
 echo "Generating integration server CR yaml"
-sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-server-name/${IntegrationServerName}/" -e "s~replace-With-Bar-URL/${BARurl}/" ${CRs_template_folder}/integrationServer.yaml > ${CRs_generated_folder}/integrationServer-generated.yaml
+sed -e "s/replace-with-server-name/${IntegrationServerName}/" -e "s~replace-with-namespace/${Namespace}/" -e "s~replace-With-Bar-URL/${BARurl}/" ${CRs_template_folder}/integrationServer.yaml > ${CRs_generated_folder}/integrationServer-generated.yaml
 #!!!!!!!!!!!!!!!!
 ####### ADD ALSO A REFERENCE TO BAR FILE
 #!!!!!!!!!!!!!!!!

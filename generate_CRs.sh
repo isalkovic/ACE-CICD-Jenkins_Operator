@@ -8,7 +8,6 @@ PathToConfigFolder=/workspace/output/initial-config
 DIRbarauth=${PathToConfigFolder}/barauth
 DIRsetdbparms=${PathToConfigFolder}/setdbparms
 DIRtruststore=${PathToConfigFolder}/truststore
-# skipping at the mment because zip is not available in image used for build CRs
 DIRpolicies=/workspace/output/ace-toolkit-code/DefaultPolicies
 DIRserverconf=${PathToConfigFolder}/serverconf
 #DIRsetdbparms=server-config/initial-config/setdbparms
@@ -87,7 +86,8 @@ if [ -d "${DIRpolicies}" ]
 then
 	if [ "$(ls -A ${DIRpolicies})" ]; then
     echo "Generating policy CR yaml"
-    zip -j - ${DIRpolicies}/* > ${DIRpolicies}/policy.zip -x '*.zip*'
+		tar -cZf ${DIRpolicies}/policy.zip -C ${DIRpolicies} .
+    # works if you have zip installed:: zip -j - ${DIRpolicies}/* > ${DIRpolicies}/policy.zip -x '*.zip*'
     policy=$(base64 -w 0 ${DIRpolicies}/policy.zip)
     sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-policy-name~${appname}-policy~" -e "s~replace-with-policy-base64~${policy}~" ${CRs_template_folder}/configuration_policyProject.yaml > ${CRs_generated_folder}/policyProject-generated.yaml
     #add reference to this config cr to integration server cr

@@ -1,0 +1,89 @@
+﻿apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: new-pipeline
+  namespace: cp4i
+spec:
+  params:
+    - default: 'https://github.com/isalkovic/ACE-CICD-Jenkins_Operator.git'
+      name: git-url
+      type: string
+    - default: main
+      name: git-revision
+      type: string
+    - default: test
+      name: server-name
+      type: string
+    - default: test
+      name: deployment-namespace
+      type: string
+  tasks:
+    - name: fetch-from-git
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: revision
+          value: $(params.git-revision)
+      taskRef:
+        kind: Task
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: git-source
+        - name: ssh-directory
+          workspace: git-source
+        - name: ssl-ca-directory
+          workspace: git-source
+        - name: basic-auth
+          workspace: git-source
+    - name: ace-build-bar
+      params:
+        - name: appName
+          value: /workspace/workspace/Dockerfile
+      runAfter:
+        - fetch-from-git
+      taskRef:
+        kind: Task
+        name: ace-build-bar
+      workspaces:
+        - name: output
+          workspace: git-source
+    - name: ace-generate-crs
+      params:
+        - name: appName
+          value: test
+      runAfter:
+        - fetch-from-git
+      taskRef:
+        kind: Task
+        name: ace-generate-crs
+      workspaces:
+        - name: output
+          workspace: git-source
+    - name: ace-nexus-upload-bar-ti2
+      params:
+        - name: appName
+          value: test
+      runAfter:
+        - ace-build-bar
+      taskRef:
+        kind: Task
+        name: ace-nexus-upload-bar
+      workspaces:
+        - name: output
+          workspace: git-source
+    - name: ace-deploy-crs
+      params:
+        - name: appName
+          value: test
+      runAfter:
+        - ace-generate-crs
+        - ace-nexus-upload-bar-ti2
+      taskRef:
+        kind: Task
+        name: ace-deploy-crs
+      workspaces:
+        - name: output
+          workspace: git-source
+  workspaces:
+    - name: git-source

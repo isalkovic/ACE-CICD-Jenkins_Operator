@@ -1,0 +1,16 @@
+﻿apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: ace-pipeline-run
+  namespace: cp4i
+  labels:
+    tekton.dev/pipeline: new-pipeline
+spec:
+  pipelineRef:
+    name: new-pipeline
+  serviceAccountName: pipeline
+  timeout: 1h0m0s
+  workspaces:
+    - name: git-source
+      persistentVolumeClaim:
+        claimName: tekton-pvc

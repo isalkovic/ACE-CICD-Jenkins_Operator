@@ -1,19 +1,20 @@
 # set the namespace and prefix for CR names
-Namespace=cp4i
+Namespace=ace
 appname=ivoapp
 IntegrationServerName=ivoserver
 
 DIRbarauth=/workspace/output/server-config/initial-config/barauth
-DIRsetdbparms=/workspace/output/erver-config/initial-config/setdbparms
+DIRsetdbparms=/workspace/output/server-config/initial-config/setdbparms
 DIRtruststore=/workspace/output/server-config/initial-config/truststore
 DIRpolicies=/workspace/output/ace-toolkit-code/DefaultPolicies
 DIRserverconf=/workspace/output/server-config/initial-config/serverconf
 #DIRsetdbparms=server-config/initial-config/setdbparms
 
 CRs_template_folder=operator_resources_CRs
-CRs_generated_folder=generated
+CRs_generated_folder=/workspace/output/operator_resources_CRs/generated
 
-BARurl=http://example-nexusrepo-sonatype-nexus-service-openshift-operators.itzroks-2700008cwu-nj6n04-6ccd7f378ae819553d37d5f2ee142bd6-0000.mex01.containers.appdomain.cloud/repository/APIS-ACE-nexus-repo/org/foo/1.0/foo-1.0.bar
+## Change Bar URL to something that is generated
+BARurl=http://example-nexusrepo-sonatype-nexus-service-ace.cp4intpg-wdc04-wuov6q-8946bbc006b7c6eb0829d088919818bb-0000.us-east.containers.appdomain.cloud/repository/maven-releases/org/fook/3.0/fook-13.0.bar
 
 mkdir ${CRs_generated_folder}
 

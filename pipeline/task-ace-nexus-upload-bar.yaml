@@ -1,0 +1,24 @@
+﻿apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ace-nexus-upload-bar
+  namespace: cp4i
+spec:
+  params:
+    - default: test
+      description: The path to the dockerfile to build
+      name: appName
+      type: string
+  steps:
+    - image: 'quay.io/openshift/origin-cli:latest'
+      name: upload-bar
+      resources: {}
+      script: >
+        find /workspace
+
+        curl -v -u admin:admin123 --upload-file
+        /workspace/output/ace-toolkit-code/replaceWithName.bar
+        http://example-nexusrepo-sonatype-nexus-service-openshift-operators.itzroks-2700008cwu-nj6n04-6ccd7f378ae819553d37d5f2ee142bd6-0000.mex01.containers.appdomain.cloud/repository/APIS-ACE-nexus-repo/org/fook/3.0/fook-3.0.bar
+  workspaces:
+    - description: The git repo has been cloned onto the volume backing this Workspace.
+      name: output

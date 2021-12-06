@@ -1,0 +1,21 @@
+﻿apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ace-generate-crs
+  namespace: cp4i
+spec:
+  params:
+    - default: test
+      description: The path to the dockerfile to build
+      name: appName
+      type: string
+  steps:
+    - image: 'quay.io/openshift/origin-cli:latest'
+      name: generate-crs
+      resources: {}
+      script: |
+        /workspace/output/generate_CRs.sh
+        find /workspace
+  workspaces:
+    - description: The git repo has been cloned onto the volume backing this Workspace.
+      name: output

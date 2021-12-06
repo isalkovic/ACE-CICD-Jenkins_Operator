@@ -1,0 +1,25 @@
+﻿apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ace-build-bar
+  namespace: cp4i
+spec:
+  params:
+    - default: test
+      description: The path to the dockerfile to build
+      name: appName
+      type: string
+  steps:
+    - image: 'image-registry.openshift-image-registry.svc:5000/cp4i/ace-build-minimal'
+      name: run-ibm-int
+      resources: {}
+      script: >
+        find /workspace
+
+        source /opt/ibm/ace-12/server/bin/mqsiprofile
+
+        ibmint package --input-path /workspace/output/ace-toolkit-code
+        --output-bar-file /workspace/output/ace-toolkit-code/replaceWithName.bar
+  workspaces:
+    - description: The git repo has been cloned onto the volume backing this Workspace.
+      name: output

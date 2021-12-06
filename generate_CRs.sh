@@ -3,11 +3,13 @@ Namespace=ace
 appname=ivoapp
 IntegrationServerName=ivoserver
 
-DIRbarauth=/workspace/output/server-config/initial-config/barauth
-DIRsetdbparms=/workspace/output/server-config/initial-config/setdbparms
-DIRtruststore=/workspace/output/server-config/initial-config/truststore
+PathToConfigFolder=/workspace/output/initial-config
+
+DIRbarauth=${PathToConfigFolder}/barauth
+DIRsetdbparms=${PathToConfigFolder}/setdbparms
+DIRtruststore=${PathToConfigFolder}/truststore
 DIRpolicies=/workspace/output/ace-toolkit-code/DefaultPolicies
-DIRserverconf=/workspace/output/server-config/initial-config/serverconf
+DIRserverconf=${PathToConfigFolder}/serverconf
 #DIRsetdbparms=server-config/initial-config/setdbparms
 
 CRs_template_folder=operator_resources_CRs
@@ -18,7 +20,7 @@ BARurl=http://example-nexusrepo-sonatype-nexus-service-ace.cp4intpg-wdc04-wuov6q
 
 mkdir ${CRs_generated_folder}
 
-chmod -R 777 server-config
+chmod -R 777 ${PathToConfigFolder}
 
 
 # Create the Integration Server CR in any case

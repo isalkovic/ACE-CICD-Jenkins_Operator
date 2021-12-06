@@ -12,7 +12,7 @@ DIRpolicies=/workspace/output/ace-toolkit-code/DefaultPolicies
 DIRserverconf=${PathToConfigFolder}/serverconf
 #DIRsetdbparms=server-config/initial-config/setdbparms
 
-CRs_template_folder=operator_resources_CRs
+CRs_template_folder=/workspace/output/operator_resources_CRs
 CRs_generated_folder=/workspace/output/operator_resources_CRs/generated
 
 ## Change Bar URL to something that is generated

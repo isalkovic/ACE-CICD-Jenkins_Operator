@@ -3,11 +3,11 @@ Namespace=cp4i
 appname=ivoapp
 IntegrationServerName=ivoserver
 
-DIRbarauth=server-config/initial-config/barauth
-DIRsetdbparms=server-config/initial-config/setdbparms
-DIRtruststore=server-config/initial-config/truststore
-DIRpolicies=ace-toolkit-code/DefaultPolicies
-DIRserverconf=server-config/initial-config/serverconf
+DIRbarauth=/workspace/output/server-config/initial-config/barauth
+DIRsetdbparms=/workspace/output/erver-config/initial-config/setdbparms
+DIRtruststore=/workspace/output/server-config/initial-config/truststore
+DIRpolicies=/workspace/output/ace-toolkit-code/DefaultPolicies
+DIRserverconf=/workspace/output/server-config/initial-config/serverconf
 #DIRsetdbparms=server-config/initial-config/setdbparms
 
 CRs_template_folder=operator_resources_CRs

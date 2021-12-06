@@ -9,7 +9,7 @@ DIRbarauth=${PathToConfigFolder}/barauth
 DIRsetdbparms=${PathToConfigFolder}/setdbparms
 DIRtruststore=${PathToConfigFolder}/truststore
 # skipping at the mment because zip is not available in image used for build CRs
-#DIRpolicies=/workspace/output/ace-toolkit-code/DefaultPolicies
+DIRpolicies=/workspace/output/ace-toolkit-code/DefaultPolicies
 DIRserverconf=${PathToConfigFolder}/serverconf
 #DIRsetdbparms=server-config/initial-config/setdbparms
 

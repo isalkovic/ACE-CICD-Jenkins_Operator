@@ -6,6 +6,6 @@ metadata:
   labels:
     labelname: apis
 spec:
-  data: eplace-with-barauth-base64
+  data: replace-with-barauth-base64
   description: "Requirement when using external bar repo - even if no auth required, configuration is required"
   type: barauth

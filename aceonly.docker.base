@@ -5,4 +5,6 @@ ENV LICENSE=accept
 USER root
 
 
+RUN microdnf install zip
+
 USER 1000

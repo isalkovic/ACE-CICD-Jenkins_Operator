@@ -37,7 +37,7 @@ then
 	if [ "$(ls -A ${DIRbarauth})" ]; then
     echo "Generating bar auth CR yaml"
     barauth=$(base64 -w 0 ${DIRbarauth}/auth.json)
-    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-barauth-name~${appname}-barauth~" -e "s~replace-with-barauth-base64~${barauth}~" ${CRs_template_folder}/configuration_setdbparms.yaml > ${CRs_generated_folder}/configurations/setdbparms-generated.yaml
+    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-barauth-name~${appname}-barauth~" -e "s~replace-with-barauth-base64~${barauth}~" ${CRs_template_folder}/configuration_barauth.yaml > ${CRs_generated_folder}/configurations/barauth-generated.yaml
     #add reference to this config cr to integration server cr
 		echo "Adding barauth configuration reference to integration server CR yaml"
     echo "    - ${appname}-barauth" >> ${CRs_generated_folder}/integrationServer-generated.yaml

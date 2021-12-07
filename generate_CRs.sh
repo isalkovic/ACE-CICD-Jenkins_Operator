@@ -1,5 +1,5 @@
 # set the namespace and prefix for CR names
-Namespace=ace
+Namespace=cp4i-ace-poc
 appname=ivoapp
 IntegrationServerName=ivoserver
 

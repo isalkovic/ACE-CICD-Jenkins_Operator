@@ -1,7 +1,4 @@
-# set the namespace and prefix for CR names
-Namespace=cp4i-ace-poc
-appname=ivoapp
-IntegrationServerName=ivoserver
+# Env variables DEPLOYMENT_NAMESPACE, BAR_NAME , INTEGRATION_SERVER_NAME NEXUS_SERVER_BASE_URL, NEXUS_REPOSITORY_NAME ,NEXUS_PATH and BAR_VERSION are set in the pipeline/pipelinerun/task definitions
 
 PathToConfigFolder=/workspace/output/initial-config
 
@@ -15,18 +12,14 @@ DIRserverconf=${PathToConfigFolder}/serverconf
 CRs_template_folder=/workspace/output/operator_resources_CRs
 CRs_generated_folder=/workspace/output/operator_resources_CRs/generated
 
-## Change Bar URL to something that is generated
-BARurl=http://example-nexusrepo-sonatype-nexus-service-ace.cp4intpg-wdc04-wuov6q-8946bbc006b7c6eb0829d088919818bb-0000.us-east.containers.appdomain.cloud/repository/maven-releases/org/fook/3.0/fook-13.0.bar
+BARurl=${NEXUS_SERVER_BASE_URL}/repository/${NEXUS_REPOSITORY_NAME}/${NEXUS_PATH}/${BAR_VERSION}/${BAR_NAME}-${BAR_VERSION}.bar
 
 mkdir ${CRs_generated_folder}
 mkdir ${CRs_generated_folder}/configurations
 
-chmod -R 777 ${PathToConfigFolder}
-
-
 # Create the Integration Server CR in any case
 echo "Generating integration server CR yaml"
-sed -e "s/replace-with-server-name/${IntegrationServerName}/" -e "s~replace-with-namespace~${Namespace}~" -e "s~replace-With-Bar-URL~${BARurl}~" ${CRs_template_folder}/integrationServer.yaml > ${CRs_generated_folder}/integrationServer-generated.yaml
+sed -e "s/replace-with-server-name/${INTEGRATION_SERVER_NAME}/" -e "s~replace-with-namespace~${DEPLOYMENT_NAMESPACE}~" -e "s~replace-With-Bar-URL~${BARurl}~" ${CRs_template_folder}/integrationServer.yaml > ${CRs_generated_folder}/integrationServer-generated.yaml
 #!!!!!!!!!!!!!!!!
 ####### ADD ALSO A REFERENCE TO BAR FILE
 #!!!!!!!!!!!!!!!!
@@ -37,10 +30,10 @@ then
 	if [ "$(ls -A ${DIRbarauth})" ]; then
     echo "Generating bar auth CR yaml"
     barauth=$(base64 -w 0 ${DIRbarauth}/auth.json)
-    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-barauth-name~${appname}-barauth~" -e "s~replace-with-barauth-base64~${barauth}~" ${CRs_template_folder}/configuration_barauth.yaml > ${CRs_generated_folder}/configurations/barauth-generated.yaml
+    sed -e "s/replace-with-namespace/${DEPLOYMENT_NAMESPACE}/" -e "s~replace-with-barauth-name~${BAR_NAME}-barauth~" -e "s~replace-with-barauth-base64~${barauth}~" ${CRs_template_folder}/configuration_barauth.yaml > ${CRs_generated_folder}/configurations/barauth-generated.yaml
     #add reference to this config cr to integration server cr
 		echo "Adding barauth configuration reference to integration server CR yaml"
-    echo "    - ${appname}-barauth" >> ${CRs_generated_folder}/integrationServer-generated.yaml
+    echo "    - ${BAR_NAME}-barauth" >> ${CRs_generated_folder}/integrationServer-generated.yaml
 	else
     echo "${DIRbarauth} is Empty. Skipping."
 	fi
@@ -54,10 +47,10 @@ then
 	if [ "$(ls -A ${DIRsetdbparms})" ]; then
     echo "Generating setdbparms CR yaml"
     setdbparms=$(base64 -w 0 ${DIRsetdbparms}/setdbparms.txt)
-    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-setdbparms-name~${appname}-setdbparms~" -e "s~replace-with-setdbparms-base64~${setdbparms}~" ${CRs_template_folder}/configuration_setdbparms.yaml > ${CRs_generated_folder}/configurations/setdbparms-generated.yaml
+    sed -e "s/replace-with-namespace/${DEPLOYMENT_NAMESPACE}/" -e "s~replace-with-setdbparms-name~${BAR_NAME}-setdbparms~" -e "s~replace-with-setdbparms-base64~${setdbparms}~" ${CRs_template_folder}/configuration_setdbparms.yaml > ${CRs_generated_folder}/configurations/setdbparms-generated.yaml
     #add reference to this config cr to integration server cr
 		echo "Adding setdbparms configuration reference to integration server CR yaml"
-    echo "    - ${appname}-setdbparms" >> ${CRs_generated_folder}/integrationServer-generated.yaml
+    echo "    - ${BAR_NAME}-setdbparms" >> ${CRs_generated_folder}/integrationServer-generated.yaml
 	else
     echo "${DIRsetdbparms} is Empty. Skipping."
 	fi
@@ -71,10 +64,10 @@ then
 	if [ "$(ls -A ${DIRtruststore})" ]; then
     echo "Generating truststore CR yaml"
     truststore=$(base64 -w 0 server-config/initial-config/truststore/es-cert.p12)
-    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-truststore-name~${appname}-truststore~" -e "s~replace-with-truststore-base64~${truststore}~" ${CRs_template_folder}/configuration_truststore.yaml > ${CRs_generated_folder}/configurations/truststore-generated.yaml
+    sed -e "s/replace-with-namespace/${DEPLOYMENT_NAMESPACE}/" -e "s~replace-with-truststore-name~${BAR_NAME}-truststore~" -e "s~replace-with-truststore-base64~${truststore}~" ${CRs_template_folder}/configuration_truststore.yaml > ${CRs_generated_folder}/configurations/truststore-generated.yaml
     #add reference to this config cr to integration server cr
 		echo "Adding truststore configuration reference to integration server CR yaml"
-    echo "    - ${appname}-truststore" >> ${CRs_generated_folder}/integrationServer-generated.yaml
+    echo "    - ${BAR_NAME}-truststore" >> ${CRs_generated_folder}/integrationServer-generated.yaml
   else
     echo "${DIRtruststore} is Empty. Skipping."
 	fi
@@ -91,10 +84,10 @@ then
     # works if you have zip installed::
 		zip -r - ${DIRpolicies}/* > ${PathToConfigFolder}/policy.zip -x '*.zip*'
     policy=$(base64 -w 0 ${PathToConfigFolder}/policy.zip)
-    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-policy-name~${appname}-policy~" -e "s~replace-with-policy-base64~${policy}~" ${CRs_template_folder}/configuration_policyProject.yaml > ${CRs_generated_folder}/configurations/policyProject-generated.yaml
+    sed -e "s/replace-with-namespace/${DEPLOYMENT_NAMESPACE}/" -e "s~replace-with-policy-name~${BAR_NAME}-policy~" -e "s~replace-with-policy-base64~${policy}~" ${CRs_template_folder}/configuration_policyProject.yaml > ${CRs_generated_folder}/configurations/policyProject-generated.yaml
     #add reference to this config cr to integration server cr
 		echo "Adding policyProject configuration reference to integration server CR yaml"
-    echo "    - ${appname}-policy" >> ${CRs_generated_folder}/integrationServer-generated.yaml
+    echo "    - ${BAR_NAME}-policy" >> ${CRs_generated_folder}/integrationServer-generated.yaml
 else
     echo "${DIRpolicies} is Empty. Skipping."
 	fi
@@ -108,10 +101,10 @@ then
 	if [ "$(ls -A ${DIRserverconf})" ]; then
     echo "Generating server conf CR yaml"
     serverconf=$(base64 -w 0 ${DIRserverconf}/server.conf.yaml)
-    sed -e "s/replace-with-namespace/${Namespace}/" -e "s~replace-with-serverconf-name~${appname}-serverconf~" -e "s~replace-with-serverconf-base64~${serverconf}~" ${CRs_template_folder}/configuration_serverconf.yaml > ${CRs_generated_folder}/configurations/server.conf-generated.yaml
+    sed -e "s/replace-with-namespace/${DEPLOYMENT_NAMESPACE}/" -e "s~replace-with-serverconf-name~${BAR_NAME}-serverconf~" -e "s~replace-with-serverconf-base64~${serverconf}~" ${CRs_template_folder}/configuration_serverconf.yaml > ${CRs_generated_folder}/configurations/server.conf-generated.yaml
     #add reference to this config cr to integration server cr
 		echo "Adding serverconf configuration reference to integration server CR yaml"
-    echo "    - ${appname}-serverconf" >> ${CRs_generated_folder}/integrationServer-generated.yaml
+    echo "    - ${BAR_NAME}-serverconf" >> ${CRs_generated_folder}/integrationServer-generated.yaml
 else
     echo "${DIRserverconf} is Empty. Skipping."
 	fi

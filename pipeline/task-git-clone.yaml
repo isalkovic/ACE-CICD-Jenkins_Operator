@@ -2,7 +2,6 @@
 kind: Task
 metadata:
   name: ace-git-clone
-  namespace: cp4i
   labels:
     app.kubernetes.io/version: '0.5'
 spec:
@@ -146,12 +145,11 @@ spec:
 
         set -eu
 
+        echo "========== Cloning the git repository =========="
 
         if [ "${PARAM_VERBOSE}" = "true" ] ; then
           set -x
         fi
-
-
 
         if [ "${WORKSPACE_BASIC_AUTH_DIRECTORY_BOUND}" = "true" ] ; then
           cp "${WORKSPACE_BASIC_AUTH_DIRECTORY_PATH}/.git-credentials" "${PARAM_USER_HOME}/.git-credentials"
@@ -160,20 +158,17 @@ spec:
           chmod 400 "${PARAM_USER_HOME}/.gitconfig"
         fi
 
-
         if [ "${WORKSPACE_SSH_DIRECTORY_BOUND}" = "true" ] ; then
           cp -R "${WORKSPACE_SSH_DIRECTORY_PATH}" "${PARAM_USER_HOME}"/.ssh
           chmod 700 "${PARAM_USER_HOME}"/.ssh
           chmod -R 400 "${PARAM_USER_HOME}"/.ssh/*
         fi
 
-
         if [ "${WORKSPACE_SSL_CA_DIRECTORY_BOUND}" = "true" ] ; then
            export GIT_SSL_CAPATH="${WORKSPACE_SSL_CA_DIRECTORY_PATH}"
         fi
 
         CHECKOUT_DIR="${WORKSPACE_OUTPUT_PATH}/${PARAM_SUBDIRECTORY}"
-
 
         cleandir() {
           # Delete any existing contents of the repo directory if it exists.
@@ -190,11 +185,9 @@ spec:
           fi
         }
 
-
         if [ "${PARAM_DELETE_EXISTING}" = "true" ] ; then
           cleandir
         fi
-
 
         test -z "${PARAM_HTTP_PROXY}" || export HTTP_PROXY="${PARAM_HTTP_PROXY}"
 
@@ -202,7 +195,6 @@ spec:
         HTTPS_PROXY="${PARAM_HTTPS_PROXY}"
 
         test -z "${PARAM_NO_PROXY}" || export NO_PROXY="${PARAM_NO_PROXY}"
-
 
         /ko-app/git-init \
           -url="${PARAM_URL}" \
@@ -227,6 +219,10 @@ spec:
 
         printf "%s" "${PARAM_URL}" > "$(results.url.path)" # Add an extra step
         to list the contents of /workspace
+
+        echo "========== Applying 777 to the workspace, to later avoid problems with different users in different pods =========="
+
+        chmod -R 777 /workspace
     - args:
         - '-c'
         - |
